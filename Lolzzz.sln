@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lolzzz", "Lolzzz\Lolzzz.csproj", "{317A6118-A0F1-4EDB-BB94-795A9CC6D702}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Lolzzz", "Lolzzz\Lolzzz.vbproj", "{A3A0E091-4287-44F2-BD5D-556C76D8BE07}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{25792500-77D3-4CBD-AA42-92321547B844}"
+	ProjectSection(SolutionItems) = preProject
+		Lolzzz\CustomDataGridView.vb = Lolzzz\CustomDataGridView.vb
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +16,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{317A6118-A0F1-4EDB-BB94-795A9CC6D702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{317A6118-A0F1-4EDB-BB94-795A9CC6D702}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{317A6118-A0F1-4EDB-BB94-795A9CC6D702}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{317A6118-A0F1-4EDB-BB94-795A9CC6D702}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3A0E091-4287-44F2-BD5D-556C76D8BE07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3A0E091-4287-44F2-BD5D-556C76D8BE07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3A0E091-4287-44F2-BD5D-556C76D8BE07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3A0E091-4287-44F2-BD5D-556C76D8BE07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
