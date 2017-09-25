@@ -19,6 +19,7 @@
             </ComboBox>
             <TextBox Width="200" Margin="5,5,5,5" Text="{Binding CurrentColumnFilterText, UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Open All" Command="{Binding OpenAllCommand}" Margin="5" />
+            <Button Content="Refresh Viewed" Command="{Binding RefreshViewedCommand}" Margin="5" Visibility="Collapsed"/>
             <Button Content="Refresh All" Command="{Binding RefreshCommand}" Margin="5"/>
         </StackPanel>
     

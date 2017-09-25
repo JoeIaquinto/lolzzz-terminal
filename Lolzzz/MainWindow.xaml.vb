@@ -1,5 +1,5 @@
 ﻿Imports System.Diagnostics.Process
-
+Imports System.Data
 
 Class LolzzzTerminal
 
@@ -13,8 +13,11 @@ Class LolzzzTerminal
 
     End Sub
     Private Sub memeGrid_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles memeGrid.MouseDoubleClick
-        Dim key As Integer = sender.CurrentItem.Row("MemeKey")
-        System.Diagnostics.Process.Start("http://www.lolzzz.net/Order/Details/" & key.ToString)
+        If sender.CurrentItem IsNot Nothing AndAlso TypeOf (sender.CurrentItem) Is DataRowView Then
+
+            Dim key As Integer = sender.CurrentItem.Row("MemeKey")
+            System.Diagnostics.Process.Start("http://www.lolzzz.net/Order/Details/" & key.ToString)
+        End If
     End Sub
 
 End Class

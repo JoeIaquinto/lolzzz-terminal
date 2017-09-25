@@ -310,6 +310,26 @@ Public Class LolzzzViewModel
         FireKeyDownload(_apiKey)
     End Sub
 
+    Private _refreshViewedCommand As RelayCommand
+
+    Public ReadOnly Property RefreshViewedCommand As ICommand
+        Get
+            If _refreshViewedCommand Is Nothing Then
+                _refreshViewedCommand = New RelayCommand(AddressOf RefreshViewed)
+            End If
+            Return _refreshViewedCommand
+        End Get
+    End Property
+
+    Private Sub RefreshViewed(arg As Object)
+        For mk = 0 To MemesDV.Count - 1
+            Dim key As String = MemesDV.Item(mk)("MemeKey")
+
+            _memesDT.Rows.Remove(_memesDT.Select("MemeKey=" & key)(0))
+            FireMemeDownload(_apiKey, MemesDV.Item(mk)("MemeKey"))
+        Next
+    End Sub
+
 End Class
 
 
