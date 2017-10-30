@@ -28,20 +28,23 @@ Public Class LolzzzViewModel
         '"CurrentOwners":[{"QtyOwned":9500,"userKey":1,"UserName":"OriginalScrubLord"},{"QtyOwned":500,"userKey":1133,
         '"UserName":"Twincam"}]}
         _memesDT = New DataTable
-        _memesDT.Columns.Add("MemeKey")
-        _memesDT.Columns.Add("Ticker")
-        _memesDT.Columns.Add("Name")
-        _memesDT.Columns.Add("FullImageURL")
-        _memesDT.Columns.Add("LZValue")
-        _memesDT.Columns.Add("CurrentSharePrice")
-        _memesDT.Columns.Add("Likes")
-        _memesDT.Columns.Add("Dislikes")
-        _memesDT.Columns.Add("UserName")
-        _memesDT.Columns.Add("CreateDate")
-        _memesDT.Columns.Add("Headwinds")
-        _memesDT.Columns.Add("Tailwinds")
-        _memesDT.Columns.Add("RND")
-        _memesDT.Columns.Add("Marketing")
+        _memesDT.Columns.Add("MemeKey", GetType(String))
+        _memesDT.Columns.Add("Ticker", GetType(String))
+        _memesDT.Columns.Add("Name", GetType(String))
+        _memesDT.Columns.Add("FullImageURL", GetType(String))
+        _memesDT.Columns.Add("LZValue", GetType(Double))
+        _memesDT.Columns.Add("CurrentSharePrice", GetType(Double))
+        _memesDT.Columns.Add("Likes", GetType(Integer))
+        _memesDT.Columns.Add("Dislikes", GetType(Integer))
+        _memesDT.Columns.Add("NetLikes", GetType(Integer))
+        _memesDT.Columns.Add("UserName", GetType(String))
+        _memesDT.Columns.Add("CreateDate", GetType(Date))
+        _memesDT.Columns.Add("Headwinds", GetType(Integer))
+        _memesDT.Columns.Add("Tailwinds", GetType(Integer))
+        _memesDT.Columns.Add("NetWinds", GetType(Integer))
+        _memesDT.Columns.Add("EPSEffect", GetType(Double))
+        _memesDT.Columns.Add("RND", GetType(Integer))
+        _memesDT.Columns.Add("Marketing", GetType(Integer))
         _memesDT.Columns.Add("CurrentOwners")
 
         CreateTableOfColumnFilters()
@@ -189,10 +192,13 @@ Public Class LolzzzViewModel
         dr("CurrentSharePrice") = m.CurrentSharePrice
         dr("Likes") = m.Likes
         dr("Dislikes") = m.Dislikes
+        dr("NetLikes") = m.Likes - m.Dislikes
         dr("UserName") = m.UserName
         dr("CreateDate") = m.CreateDate
         dr("Headwinds") = m.Headwinds
         dr("Tailwinds") = m.Tailwinds
+        dr("NetWinds") = m.Tailwinds - m.Headwinds
+        dr("EPSEffect") = 0.3 * (m.Tailwinds - m.Headwinds)
         dr("RND") = m.RND
         dr("Marketing") = m.Marketing
         dr("CurrentOwners") = OwnersToString(m.CurrentOwners)
@@ -222,13 +228,9 @@ Public Class LolzzzViewModel
 
         For Each dc As DataColumn In _memesDT.Columns
 
-            'The column name will be seen so it must be translated.  The ID is only used behind the scenes so it can remain in english.
             newRow = columnsDT.NewRow
             newRow("ID") = dc.ColumnName
 
-
-
-            'This gets displayed so translate it
             newRow("ColumnName") = dc.ColumnName
 
             columnsDT.Rows.Add(newRow)
@@ -332,7 +334,6 @@ Public Class LolzzzViewModel
 
 End Class
 
-
 Public Class CurrentOrder
     Public Property OrderType As Integer
     Public Property OrderCreatorUserName As String
@@ -365,10 +366,7 @@ Public Class Meme
     Public Property Marketing As Integer
     Public Property CurrentOrders As CurrentOrder()
     Public Property CurrentOwners As CurrentOwner()
-
 End Class
-
-
 
 ''' <summary>
 ''' A command whose sole purpose is to 

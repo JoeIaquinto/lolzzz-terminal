@@ -3,9 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Lolzzz"
+        xmlns:local="Lolzzz"
+        xmlns:lolzzz="clr-namespace:Lolzzz.Lolzzz"
         mc:Ignorable="d"
         Title="Lolzzz Terminal" Height="700" Width="1250">
+    <Window.Resources>
+        <lolzzz:IntConverter x:Name="IntConverter" x:Key="IntConverter"/>
+        <lolzzz:DecimalConverter x:Name="DecimalConverter" x:Key="DecimalConverter"/>
+    </Window.Resources>
     <DockPanel LastChildFill="True">
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <Label Content="Column:" VerticalAlignment="Center" ></Label>
@@ -44,15 +49,18 @@
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
             <DataGridTextColumn x:Name="FullImageURL" Binding="{Binding FullImageURL}" Header="Full Image URL" DisplayIndex="4" Visibility="Collapsed"/>
-            <DataGridTextColumn x:Name="LZValue" Binding="{Binding LZValue}" Header="LZValue" DisplayIndex="5" />
+            <DataGridTextColumn x:Name="LZValue" Binding="{Binding LZValue, Converter={StaticResource DecimalConverter}}" Header="LZValue" DisplayIndex="5" />
 
-            <DataGridTextColumn x:Name="CurrentSharePrice" Binding="{Binding CurrentSharePrice}" Header="Current Share Price" DisplayIndex="6" />
-            <DataGridTextColumn x:Name="Likes" Binding="{Binding Likes}" Header="Likes" DisplayIndex="7" />
-            <DataGridTextColumn x:Name="Dislikes" Binding="{Binding Dislikes}" Header="Dislikes"  DisplayIndex="8" />
-            <DataGridTextColumn x:Name="Headwinds" Binding="{Binding Headwinds}" Header="Headwinds" DisplayIndex="9" />
-            <DataGridTextColumn x:Name="Tailwinds" Binding="{Binding Tailwinds}" Header="Tailwinds" DisplayIndex="10" />
-            <DataGridTextColumn x:Name="RND" Binding="{Binding RND}" Header="Research Level" DisplayIndex="11" />
-            <DataGridTextColumn x:Name="Marketing" Binding="{Binding Marketing}" Header="Marketing Level" DisplayIndex="12" />
+            <DataGridTextColumn x:Name="CurrentSharePrice" Binding="{Binding CurrentSharePrice, Converter={StaticResource DecimalConverter}}" SortMemberPath="{Binding CurrentSharePrice, Converter={StaticResource DecimalConverter}}" Header="Current Share Price" DisplayIndex="6" />
+            <DataGridTextColumn x:Name="Likes" Binding="{Binding Likes, Converter={StaticResource IntConverter}}" SortDirection="Ascending" Header="Likes" DisplayIndex="7" />
+            <DataGridTextColumn x:Name="Dislikes" Binding="{Binding Dislikes, Converter={StaticResource IntConverter}}" Header="Dislikes"  DisplayIndex="8" />
+            <DataGridTextColumn x:Name="NetLikes" Binding="{Binding NetLikes, Converter={StaticResource IntConverter}}" Header="Net Likes"  DisplayIndex="9" />
+            <DataGridTextColumn x:Name="Headwinds" Binding="{Binding Headwinds, Converter={StaticResource IntConverter}}" Header="Headwinds" DisplayIndex="10" />
+            <DataGridTextColumn x:Name="Tailwinds" Binding="{Binding Tailwinds, Converter={StaticResource IntConverter}}" Header="Tailwinds" DisplayIndex="11" />
+            <DataGridTextColumn x:Name="NetWinds" Binding="{Binding NetWinds, Converter={StaticResource IntConverter}}" Header="Net Winds" DisplayIndex="12" />
+            <DataGridTextColumn x:Name="EPSEffect" Binding="{Binding EPSEffect, Converter={StaticResource IntConverter}}" Header="Winds EPS" DisplayIndex="13" />
+            <DataGridTextColumn x:Name="RND" Binding="{Binding RND, Converter={StaticResource DecimalConverter}}" Header="Research Level" DisplayIndex="14" />
+            <DataGridTextColumn x:Name="Marketing" Binding="{Binding Marketing, Converter={StaticResource DecimalConverter}}" Header="Marketing Level" DisplayIndex="15" />
             <DataGridTemplateColumn Header="Owners">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
@@ -61,8 +69,8 @@
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
-            <DataGridTextColumn x:Name="UserName" Binding="{Binding UserName}" Header="Creator" DisplayIndex="13" />
-            <DataGridTextColumn x:Name="CreateDate" Binding="{Binding CreateDate}" Header="Create Date" DisplayIndex="14" />
+            <DataGridTextColumn x:Name="UserName" Binding="{Binding UserName}" Header="Creator" DisplayIndex="16" />
+            <DataGridTextColumn x:Name="CreateDate" Binding="{Binding CreateDate}" Header="Create Date" DisplayIndex="17" />
         </DataGrid.Columns>
     </DataGrid>
     </DockPanel>
