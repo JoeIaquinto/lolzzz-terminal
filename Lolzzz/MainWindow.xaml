@@ -6,15 +6,40 @@
         xmlns:local="Lolzzz"
         xmlns:lolzzz="clr-namespace:Lolzzz.Lolzzz"
         mc:Ignorable="d"
-        Title="Lolzzz Terminal" Height="700" Width="1250">
+        Title="Lolzzz Terminal" Height="700" Width="1250"
+        Background="Black"
+        Foreground="Green">
     <Window.Resources>
         <lolzzz:IntConverter x:Name="IntConverter" x:Key="IntConverter"/>
         <lolzzz:DecimalConverter x:Name="DecimalConverter" x:Key="DecimalConverter"/>
+        <Style x:Key="lolzzzText" TargetType="{x:Type Label}" >
+            <Setter Property="Foreground" Value="LimeGreen" />
+        </Style>
+        <Style x:Key="lolzzzTextBox" TargetType="{x:Type TextBox}" >
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="LimeGreen" />
+        </Style>
+        <Style x:Key="lolzzzCombo" TargetType="{x:Type ComboBox}" >
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="LimeGreen" />
+        </Style>
+        <Style x:Key="lolzzzComboBoxItem" TargetType="{x:Type ComboBoxItem}" >
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="LimeGreen" />
+        </Style>
+        <Style x:Key="lolzzzButton" TargetType="{x:Type Button}" >
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="LimeGreen" />
+        </Style>
+        <Style x:Key="lolzzzdgr" TargetType="{x:Type DataGridRow}" >
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="LimeGreen" />
+        </Style>
     </Window.Resources>
     <DockPanel LastChildFill="True">
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <Label Content="Column:" VerticalAlignment="Center" ></Label>
-            <ComboBox Width="125" Margin="0, 5, 5, 5" HorizontalAlignment="Left" SelectedValue="{Binding CurrentColumnFilter, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" ItemsSource="{Binding ColumnFilterTable}" DisplayMemberPath="ColumnName" SelectedValuePath="ID"
+            <Label Style="{StaticResource lolzzzText}" Content="Column:" VerticalAlignment="Center" ></Label>
+            <ComboBox Style="{StaticResource lolzzzCombo}" Width="125" Margin="0, 5, 5, 5" HorizontalAlignment="Left" SelectedValue="{Binding CurrentColumnFilter, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" ItemsSource="{Binding ColumnFilterTable}" DisplayMemberPath="ColumnName" SelectedValuePath="ID"
                     VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" MaxDropDownHeight="200">
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -22,16 +47,21 @@
                     </ItemsPanelTemplate>
                 </ComboBox.ItemsPanel>
             </ComboBox>
-            <TextBox Width="200" Margin="5,5,5,5" Text="{Binding CurrentColumnFilterText, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Content="Open All" Command="{Binding OpenAllCommand}" Margin="5" />
-            <Button Content="Refresh Viewed" Command="{Binding RefreshViewedCommand}" Margin="5" Visibility="Collapsed"/>
-            <Button Content="Refresh All" Command="{Binding RefreshCommand}" Margin="5"/>
+            <TextBox Style="{StaticResource lolzzzTextBox}" Width="200" Margin="5,5,5,5" Text="{Binding CurrentColumnFilterText, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Style="{StaticResource lolzzzText}"  Content="Your Username:" />
+            <TextBox Style="{StaticResource lolzzzTextBox}" Width="200" Margin="5,5,5,5" Text="{Binding CurrentUsername, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Style="{StaticResource lolzzzText}"  Content="Target Username:" />
+            <TextBox Style="{StaticResource lolzzzTextBox}" Width="200" Margin="5,5,5,5" Text="{Binding TargetUsername, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Button Style="{StaticResource lolzzzButton}" Content="Open All" Command="{Binding OpenAllCommand}" Margin="5" />
+            <Button Style="{StaticResource lolzzzButton}" Content="Refresh Viewed" Command="{Binding RefreshViewedCommand}" Margin="5" Visibility="Collapsed"/>
+            <Button Style="{StaticResource lolzzzButton}" Content="Refresh All" Command="{Binding RefreshCommand}" Margin="5"/>
         </StackPanel>
     
     <DataGrid Name="memeGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="True" IsReadOnly="True" RowHeight="100" SelectionMode="Extended"
-                               ItemsSource="{Binding MemesDV, Mode=OneWay}" AlternatingRowBackground="Gainsboro"  AlternationCount="2">
+                                ItemsSource="{Binding MemesDV, Mode=OneWay}" Background="Black" AlternatingRowBackground="#454545" Foreground="LimeGreen"  AlternationCount="2"
+              >
         <DataGrid.Columns>
-            <DataGridTextColumn x:Name="MemeKey" Binding="{Binding MemeKey}" Header="Meme Key" DisplayIndex="0" Visibility="Collapsed"/>
             <DataGridTextColumn x:Name="Ticker" Binding="{Binding Ticker}" Header="Ticker" DisplayIndex="1" Width="70"/>
             <DataGridTemplateColumn x:Name="Name" Header="Name" DisplayIndex="2" Width="100" >
                 <DataGridTemplateColumn.CellTemplate>
@@ -59,7 +89,9 @@
             <DataGridTextColumn x:Name="Tailwinds" Binding="{Binding Tailwinds, Converter={StaticResource IntConverter}}" Header="Tailwinds" DisplayIndex="11" />
             <DataGridTextColumn x:Name="NetWinds" Binding="{Binding NetWinds, Converter={StaticResource IntConverter}}" Header="Net Winds" DisplayIndex="12" />
             <DataGridTextColumn x:Name="EPSEffect" Binding="{Binding EPSEffect, Converter={StaticResource IntConverter}}" Header="Winds EPS" DisplayIndex="13" />
-            <DataGridTextColumn x:Name="RND" Binding="{Binding RND, Converter={StaticResource DecimalConverter}}" Header="Research Level" DisplayIndex="14" />
+                <DataGridTextColumn x:Name="YourValue" Binding="{Binding YourValue}" Header="Your Value" />
+                <DataGridTextColumn x:Name="TargetValue" Binding="{Binding TargetValue}" Header="Target Value" />
+                <DataGridTextColumn x:Name="RND" Binding="{Binding RND, Converter={StaticResource DecimalConverter}}" Header="Research Level" DisplayIndex="14" />
             <DataGridTextColumn x:Name="Marketing" Binding="{Binding Marketing, Converter={StaticResource DecimalConverter}}" Header="Marketing Level" DisplayIndex="15" />
             <DataGridTemplateColumn Header="Owners">
                 <DataGridTemplateColumn.CellTemplate>

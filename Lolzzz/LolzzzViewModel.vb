@@ -13,6 +13,10 @@ Public Class LolzzzViewModel
     Private Const FILTER_BIT_REPLACE_STRING = "~~!~~"
 
     Private ReadOnly httpClient = New HttpClient()
+
+    Private _currentUsername As String
+    Private _targetUsername As String
+
     Private _keys As List(Of String)
     Private _memesDT As DataTable
     Private _columnFilterGenericString As String
@@ -46,11 +50,31 @@ Public Class LolzzzViewModel
         _memesDT.Columns.Add("RND", GetType(Integer))
         _memesDT.Columns.Add("Marketing", GetType(Integer))
         _memesDT.Columns.Add("CurrentOwners")
+        _memesDT.Columns.Add("YourValue", GetType(Double))
+        _memesDT.Columns.Add("TargetValue", GetType(Double))
 
         CreateTableOfColumnFilters()
         FireKeyDownload(_apiKey)
 
     End Sub
+
+    Public Property CurrentUsername As String
+        Get
+            Return _currentUsername
+        End Get
+        Set(value As String)
+            _currentUsername = value
+        End Set
+    End Property
+
+    Public Property TargetUsername As String
+        Get
+            Return _targetUsername
+        End Get
+        Set(value As String)
+            _targetUsername = value
+        End Set
+    End Property
 
     Public Property Keys As List(Of String)
         Get
@@ -202,6 +226,8 @@ Public Class LolzzzViewModel
         dr("RND") = m.RND
         dr("Marketing") = m.Marketing
         dr("CurrentOwners") = OwnersToString(m.CurrentOwners)
+        dr("YourValue") = OwnersToShares(CurrentUsername, m.CurrentOwners) * m.LZValue
+        dr("TargetValue") = OwnersToShares(TargetUsername, m.CurrentOwners) * m.LZValue
         Return dr
     End Function
 
@@ -215,6 +241,15 @@ Public Class LolzzzViewModel
 "
         Next
         Return ret
+    End Function
+
+    Public Function OwnersToShares(ownerName As String, memeOwners As CurrentOwner()) As Integer
+        For Each owner As CurrentOwner In memeOwners
+            If owner.UserName = ownerName Then
+                Return owner.QtyOwned
+            End If
+        Next
+        Return 0
     End Function
 
     Private Sub CreateTableOfColumnFilters()
