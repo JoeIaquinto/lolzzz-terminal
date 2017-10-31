@@ -31,6 +31,16 @@
             <Setter Property="Background" Value="Black" />
             <Setter Property="Foreground" Value="LimeGreen" />
         </Style>
+        <Style x:Key="lolzzzHeader" TargetType="{x:Type DataGridColumnHeader}" >
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="LimeGreen" />
+            <Setter Property="Margin" Value="1" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="lolzzzRowHeader" TargetType="{x:Type DataGridRowHeader}" >
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="LimeGreen" />
+        </Style>
         <Style x:Key="lolzzzdgr" TargetType="{x:Type DataGridRow}" >
             <Setter Property="Background" Value="Black" />
             <Setter Property="Foreground" Value="LimeGreen" />
@@ -40,7 +50,7 @@
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <Label Style="{StaticResource lolzzzText}" Content="Column:" VerticalAlignment="Center" ></Label>
             <ComboBox Style="{StaticResource lolzzzCombo}" Width="125" Margin="0, 5, 5, 5" HorizontalAlignment="Left" SelectedValue="{Binding CurrentColumnFilter, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" ItemsSource="{Binding ColumnFilterTable}" DisplayMemberPath="ColumnName" SelectedValuePath="ID"
-                    VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" MaxDropDownHeight="200">
+                    VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" MaxDropDownHeight="200" ItemContainerStyle="{StaticResource lolzzzComboBoxItem}">
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VirtualizingStackPanel />
@@ -60,9 +70,9 @@
     
     <DataGrid Name="memeGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="True" IsReadOnly="True" RowHeight="100" SelectionMode="Extended"
                                 ItemsSource="{Binding MemesDV, Mode=OneWay}" Background="Black" AlternatingRowBackground="#454545" Foreground="LimeGreen"  AlternationCount="2"
-              >
+              ColumnHeaderStyle="{StaticResource lolzzzHeader}" RowHeaderStyle="{StaticResource lolzzzRowHeader}" RowBackground="Black" VerticalGridLinesBrush="LimeGreen" HorizontalGridLinesBrush="LimeGreen">
         <DataGrid.Columns>
-            <DataGridTextColumn x:Name="Ticker" Binding="{Binding Ticker}" Header="Ticker" DisplayIndex="1" Width="70"/>
+            <DataGridTextColumn HeaderStyle="{StaticResource lolzzzHeader}" x:Name="Ticker" Binding="{Binding Ticker}" Header="Ticker" DisplayIndex="1" Width="70"/>
             <DataGridTemplateColumn x:Name="Name" Header="Name" DisplayIndex="2" Width="100" >
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>

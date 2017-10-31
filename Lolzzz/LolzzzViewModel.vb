@@ -14,8 +14,8 @@ Public Class LolzzzViewModel
 
     Private ReadOnly httpClient = New HttpClient()
 
-    Private _currentUsername As String
-    Private _targetUsername As String
+    Private _currentUsername As String = "Donald J Trump"
+    Private _targetUsername As String = "Franz Gruber"
 
     Private _keys As List(Of String)
     Private _memesDT As DataTable
