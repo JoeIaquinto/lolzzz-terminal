@@ -45,6 +45,18 @@
             <Setter Property="Background" Value="Black" />
             <Setter Property="Foreground" Value="LimeGreen" />
         </Style>
+        <Style x:Key="lolzzzdg" TargetType="{x:Type DataGrid}" >
+            <Setter Property="RowBackground" Value="Black" />
+            <Setter Property="Foreground" Value="LimeGreen" />
+            <Setter Property="Background" Value="#343434" />
+            <Setter Property="AlternatingRowBackground" Value="#343434" />
+            <Setter Property="VerticalGridLinesBrush" Value="LimeGreen" />
+            <Setter Property="HorizontalGridLinesBrush" Value="LimeGreen" />
+            <Setter Property="AlternationCount" Value="2" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="CanUserAddRows" Value="False" />
+            <Setter Property="CanUserDeleteRows" Value="False" />
+        </Style>
     </Window.Resources>
     <DockPanel LastChildFill="True">
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
@@ -65,12 +77,11 @@
 
             <Button Style="{StaticResource lolzzzButton}" Content="Open All" Command="{Binding OpenAllCommand}" Margin="5" />
             <Button Style="{StaticResource lolzzzButton}" Content="Refresh Viewed" Command="{Binding RefreshViewedCommand}" Margin="5" Visibility="Collapsed"/>
-            <Button Style="{StaticResource lolzzzButton}" Content="Refresh All" Command="{Binding RefreshCommand}" Margin="5"/>
+            <Button Style="{StaticResource lolzzzButton}" Content="{Binding RefreshAllText}" Command="{Binding RefreshCommand}" Margin="5"/>
         </StackPanel>
     
-    <DataGrid Name="memeGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="True" IsReadOnly="True" RowHeight="100" SelectionMode="Extended"
-                                ItemsSource="{Binding MemesDV, Mode=OneWay}" Background="Black" AlternatingRowBackground="#454545" Foreground="LimeGreen"  AlternationCount="2"
-              ColumnHeaderStyle="{StaticResource lolzzzHeader}" RowHeaderStyle="{StaticResource lolzzzRowHeader}" RowBackground="Black" VerticalGridLinesBrush="LimeGreen" HorizontalGridLinesBrush="LimeGreen">
+    <DataGrid Name="memeGrid" AutoGenerateColumns="False" RowHeight="100" SelectionMode="Extended"
+                                ItemsSource="{Binding MemesDV, Mode=OneWay}" ColumnHeaderStyle="{StaticResource lolzzzHeader}" RowHeaderStyle="{StaticResource lolzzzRowHeader}" Style="{StaticResource lolzzzdg}">
         <DataGrid.Columns>
             <DataGridTextColumn HeaderStyle="{StaticResource lolzzzHeader}" x:Name="Ticker" Binding="{Binding Ticker}" Header="Ticker" DisplayIndex="1" Width="70"/>
             <DataGridTemplateColumn x:Name="Name" Header="Name" DisplayIndex="2" Width="100" >
@@ -106,8 +117,13 @@
             <DataGridTemplateColumn Header="Owners">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
-
-                        <TextBlock TextWrapping="Wrap" Text="{Binding CurrentOwners}" />
+                            
+                            <DataGrid Name="OwnerGrid" Background="Black" HeadersVisibility="Column" HorizontalScrollBarVisibility="Disabled" ColumnHeaderStyle="{StaticResource lolzzzHeader}" AutoGenerateColumns="False" Style="{StaticResource lolzzzdg}" ItemsSource="{Binding CurrentOwners, Mode=OneWay}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{Binding QtyOwned}" Header="Quantity Owned" />
+                                    <DataGridTextColumn Binding="{Binding UserName}" Header="User Name" />
+                                </DataGrid.Columns>
+                            </DataGrid>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>

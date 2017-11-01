@@ -16,7 +16,7 @@ Public Class LolzzzViewModel
 
     Private _currentUsername As String = "Donald J Trump"
     Private _targetUsername As String = "Franz Gruber"
-
+    Private _synced As Boolean = False
     Private _keys As List(Of String)
     Private _memesDT As DataTable
     Private _columnFilterGenericString As String
@@ -49,7 +49,8 @@ Public Class LolzzzViewModel
         _memesDT.Columns.Add("EPSEffect", GetType(Double))
         _memesDT.Columns.Add("RND", GetType(Integer))
         _memesDT.Columns.Add("Marketing", GetType(Integer))
-        _memesDT.Columns.Add("CurrentOwners")
+        _memesDT.Columns.Add("CurrentOwners", GetType(CurrentOwner()))
+        _memesDT.Columns.Add("ownersString", GetType(String))
         _memesDT.Columns.Add("YourValue", GetType(Double))
         _memesDT.Columns.Add("TargetValue", GetType(Double))
 
@@ -58,6 +59,16 @@ Public Class LolzzzViewModel
 
     End Sub
 
+#Region "Properties"
+    Public ReadOnly Property RefreshAllText As String
+        Get
+            If _synced Then
+                Return "Refresh All"
+            Else
+                Return "Download Memes"
+            End If
+        End Get
+    End Property
     Public Property CurrentUsername As String
         Get
             Return _currentUsername
@@ -122,62 +133,20 @@ Public Class LolzzzViewModel
     Public Property MemesDV As DataView
 
     Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+#End Region
+#Region "API Methods"
 
-    Public Sub ApplyFilters()
-        If MemesDV Is Nothing Then
-            Exit Sub
-        End If
-
-        Dim filter As String = ""
-
-        If Not String.IsNullOrEmpty(_currentColumnFilterText) Then
-            Dim fixedColumnFilterText As String = SQLFixup(_currentColumnFilterText.Replace("[", "[[").Replace("]", "]]").Replace("[[", "[[]").Replace("]]", "[]]").Replace("*", "[*]").Replace("%", "[%]").Replace("[[[]]]", "[[][]]"))
-            Dim columnFilterString As String = ""
-
-            If _currentColumnFilter = ALL_VALUE Then
-                columnFilterString = _columnFilterGenericString.Replace(FILTER_REPLACE_STRING, fixedColumnFilterText)
-
-                'If the user types "1" or "0" then we want to use Boolean.TrueString/FalseString for the bit fields.
-                If fixedColumnFilterText = "1" Or String.Equals(fixedColumnFilterText, Boolean.TrueString, StringComparison.InvariantCultureIgnoreCase) Then
-                    columnFilterString = columnFilterString.Replace(FILTER_BIT_REPLACE_STRING, Boolean.TrueString)
-                ElseIf fixedColumnFilterText = "0" Or String.Equals(fixedColumnFilterText, Boolean.FalseString, StringComparison.InvariantCultureIgnoreCase) Then
-                    columnFilterString = columnFilterString.Replace(FILTER_BIT_REPLACE_STRING, Boolean.FalseString)
-                Else
-                    'If it is not a 0, 1, FalseString, or TrueString then we want all bit column checks to return false.
-                    'Since the bit filters are "VALUE = STRING" replacing FILTER_BIT_REPLACE_STRING with the current text will handle it.
-                    columnFilterString = columnFilterString.Replace(FILTER_BIT_REPLACE_STRING, fixedColumnFilterText)
-                End If
-            Else
-                'If we are filtering on a bit field then we need to convert 1 to true and 0 to false.
-                If _bitFields.Contains(_currentColumnFilter) Then
-                    If String.Equals(fixedColumnFilterText, Boolean.TrueString, StringComparison.InvariantCultureIgnoreCase) Then
-                        columnFilterString = "[" & _currentColumnFilter & "]=1"
-                    ElseIf String.Equals(fixedColumnFilterText, Boolean.FalseString, StringComparison.InvariantCultureIgnoreCase) Then
-                        columnFilterString = "[" & _currentColumnFilter & "]=0"
-                    Else
-                        'If it is not a 0, 1, FalseString, or TrueString then we want to clear all rows.
-                        columnFilterString &= "0 = 1"
-                    End If
-                Else
-                    columnFilterString &= String.Format(" Convert([{0}], 'System.String') LIKE '%{1}%' ", New String() {_currentColumnFilter, fixedColumnFilterText})
-                End If
-            End If
-
-            AppendFilterCriteria(columnFilterString, filter)
-        End If
-
-        MemesDV.RowFilter = filter
-
-        RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("MemesDV"))
-    End Sub
-
-    Public Async Sub FireKeyDownload(apiKey As String)
+    Public Async Function FireKeyDownload(apiKey As String) As Task(Of List(Of String))
         Dim keysPage As String = "http://www.lolzzz.net/LZAPI/GetMemeKeys?apikey=" & apiKey
         Dim k As String = Await DownloadPageAsync(keysPage)
         k = k.Substring(1, k.Length - 2)
         Keys = New List(Of String)(k.Split(","))
-        For i = 0 To Keys.Count - 1
-            FireMemeDownload(apiKey, Keys(i))
+        Return Keys
+    End Function
+
+    Public Sub DownloadMemes(apiKey As String, keys As List(Of String))
+        For Each key As String In keys
+            FireMemeDownload(apiKey, key)
         Next
     End Sub
 
@@ -185,6 +154,10 @@ Public Class LolzzzViewModel
         Dim getMemeByKeyPage As String = "http://www.lolzzz.net/LZAPI/GetMemeByKey?apikey=31E2B259-343B-4752-8930-5D02AE1F352A&memekey=" & memekey
         Dim memeJson As String = Await DownloadPageAsync(getMemeByKeyPage)
         Dim meme As Meme = JsonConvert.DeserializeObject(Of Meme)(memeJson)
+        Dim foundMemes As DataRow() = _memesDT.Select("MemeKey = '" & meme.MemeKey.ToString & "'")
+        For Each foundMeme As DataRow In foundMemes
+            _memesDT.Rows.Remove(foundMeme)
+        Next
         _memesDT.Rows.Add(MemeAsDataRow(meme))
         MemesDV = _memesDT.DefaultView
         RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("MemesDV"))
@@ -206,6 +179,8 @@ Public Class LolzzzViewModel
         Return Nothing
     End Function
 
+#End Region
+
     Public Function MemeAsDataRow(m As Meme) As DataRow
         Dim dr As DataRow = _memesDT.NewRow()
         dr("MemeKey") = m.MemeKey
@@ -225,7 +200,8 @@ Public Class LolzzzViewModel
         dr("EPSEffect") = 0.3 * (m.Tailwinds - m.Headwinds)
         dr("RND") = m.RND
         dr("Marketing") = m.Marketing
-        dr("CurrentOwners") = OwnersToString(m.CurrentOwners)
+        dr("CurrentOwners") = m.CurrentOwners
+        dr("ownersString") = OwnersToString(m.CurrentOwners)
         dr("YourValue") = OwnersToShares(CurrentUsername, m.CurrentOwners) * m.LZValue
         dr("TargetValue") = OwnersToShares(TargetUsername, m.CurrentOwners) * m.LZValue
         Return dr
@@ -237,8 +213,7 @@ Public Class LolzzzViewModel
                 Order By mo.QtyOwned Descending, mo.UserName
                 Select mo
         For i = 0 To o.Count - 1
-            ret &= $"{o(i).UserName}: {o(i).QtyOwned}
-"
+            ret &= o(i).UserName & ","
         Next
         Return ret
     End Function
@@ -252,6 +227,7 @@ Public Class LolzzzViewModel
         Return 0
     End Function
 
+#Region "Setup"
     Private Sub CreateTableOfColumnFilters()
         Dim newRow As DataRow
         Dim columnsDT As DataTable = New DataTable()
@@ -262,7 +238,9 @@ Public Class LolzzzViewModel
         _bitFields = New List(Of String)
 
         For Each dc As DataColumn In _memesDT.Columns
-
+            If dc.ColumnName = "ownersString" Then
+                Continue For
+            End If
             newRow = columnsDT.NewRow
             newRow("ID") = dc.ColumnName
 
@@ -304,6 +282,59 @@ Public Class LolzzzViewModel
     Private Function SQLFixup(ByVal sqlString As String) As String
         Return sqlString.Replace("'", "''")
     End Function
+#End Region
+
+#Region "Filter Methods"
+
+    Public Sub ApplyFilters()
+        If MemesDV Is Nothing Then
+            Exit Sub
+        End If
+
+        Dim filter As String = ""
+
+        If Not String.IsNullOrEmpty(_currentColumnFilterText) Then
+            Dim fixedColumnFilterText As String = SQLFixup(_currentColumnFilterText.Replace("[", "[[").Replace("]", "]]").Replace("[[", "[[]").Replace("]]", "[]]").Replace("*", "[*]").Replace("%", "[%]").Replace("[[[]]]", "[[][]]"))
+            Dim columnFilterString As String = ""
+
+            If _currentColumnFilter = ALL_VALUE Then
+                columnFilterString = _columnFilterGenericString.Replace(FILTER_REPLACE_STRING, fixedColumnFilterText)
+
+                'If the user types "1" or "0" then we want to use Boolean.TrueString/FalseString for the bit fields.
+                If fixedColumnFilterText = "1" Or String.Equals(fixedColumnFilterText, Boolean.TrueString, StringComparison.InvariantCultureIgnoreCase) Then
+                    columnFilterString = columnFilterString.Replace(FILTER_BIT_REPLACE_STRING, Boolean.TrueString)
+                ElseIf fixedColumnFilterText = "0" Or String.Equals(fixedColumnFilterText, Boolean.FalseString, StringComparison.InvariantCultureIgnoreCase) Then
+                    columnFilterString = columnFilterString.Replace(FILTER_BIT_REPLACE_STRING, Boolean.FalseString)
+                Else
+                    'If it is not a 0, 1, FalseString, or TrueString then we want all bit column checks to return false.
+                    'Since the bit filters are "VALUE = STRING" replacing FILTER_BIT_REPLACE_STRING with the current text will handle it.
+                    columnFilterString = columnFilterString.Replace(FILTER_BIT_REPLACE_STRING, fixedColumnFilterText)
+                End If
+            Else
+                'If we are filtering on a bit field then we need to convert 1 to true and 0 to false.
+                If _bitFields.Contains(_currentColumnFilter) Then
+                    If String.Equals(fixedColumnFilterText, Boolean.TrueString, StringComparison.InvariantCultureIgnoreCase) Then
+                        columnFilterString = "[" & _currentColumnFilter & "]=1"
+                    ElseIf String.Equals(fixedColumnFilterText, Boolean.FalseString, StringComparison.InvariantCultureIgnoreCase) Then
+                        columnFilterString = "[" & _currentColumnFilter & "]=0"
+                    Else
+                        'If it is not a 0, 1, FalseString, or TrueString then we want to clear all rows.
+                        columnFilterString &= "0 = 1"
+                    End If
+                ElseIf _currentColumnFilter = "CurrentOwners" Then
+                    columnFilterString &= String.Format(" ownersString LIKE '%{1}%' ", New String() {_currentColumnFilter, fixedColumnFilterText})
+                Else
+                    columnFilterString &= String.Format(" Convert([{0}], 'System.String') LIKE '%{1}%' ", New String() {_currentColumnFilter, fixedColumnFilterText})
+                End If
+            End If
+
+            AppendFilterCriteria(columnFilterString, filter)
+        End If
+
+        MemesDV.RowFilter = filter
+
+        RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("MemesDV"))
+    End Sub
 
     Private Sub AppendFilterCriteria(ByVal filterCondition As String, ByRef resultingFilterString As String)
         If resultingFilterString.Length > 0 Then
@@ -312,6 +343,11 @@ Public Class LolzzzViewModel
 
         resultingFilterString &= filterCondition
     End Sub
+#End Region
+
+#Region "Commands"
+
+#Region "Open All"
 
     Private _openAllCommand As RelayCommand
 
@@ -330,6 +366,9 @@ Public Class LolzzzViewModel
             System.Diagnostics.Process.Start("http://www.lolzzz.net/Order/Details/" & key.ToString)
         Next
     End Sub
+#End Region
+
+#Region "Refresh"
 
     Private _refreshCommand As RelayCommand
 
@@ -342,9 +381,13 @@ Public Class LolzzzViewModel
         End Get
     End Property
 
-    Private Sub Refresh(arg As Object)
+    Private Async Sub Refresh(arg As Object)
+        _synced = True
+        RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(RefreshAllText)))
         _memesDT.Rows.Clear()
-        FireKeyDownload(_apiKey)
+        Await FireKeyDownload(_apiKey)
+
+        DownloadMemes(_apiKey, Keys)
     End Sub
 
     Private _refreshViewedCommand As RelayCommand
@@ -360,14 +403,13 @@ Public Class LolzzzViewModel
 
     Private Sub RefreshViewed(arg As Object)
         For mk = 0 To MemesDV.Count - 1
-            Dim key As String = MemesDV.Item(mk)("MemeKey")
-
-            _memesDT.Rows.Remove(_memesDT.Select("MemeKey=" & key)(0))
             FireMemeDownload(_apiKey, MemesDV.Item(mk)("MemeKey"))
         Next
     End Sub
 
 End Class
+#End Region
+#End Region
 
 Public Class CurrentOrder
     Public Property OrderType As Integer
@@ -382,6 +424,7 @@ Public Class CurrentOwner
     Public Property QtyOwned As Integer
     Public Property userKey As Integer
     Public Property UserName As String
+    Public Property Value As Double
 End Class
 
 Public Class Meme
