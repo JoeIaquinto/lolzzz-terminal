@@ -49,7 +49,7 @@ Public Class LolzzzViewModel
         _memesDT.Columns.Add("EPSEffect", GetType(Double))
         _memesDT.Columns.Add("RND", GetType(Integer))
         _memesDT.Columns.Add("Marketing", GetType(Integer))
-        _memesDT.Columns.Add("CurrentOwners", GetType(CurrentOwner()))
+        _memesDT.Columns.Add("CurrentOwners", GetType(List(Of CurrentOwner)))
         _memesDT.Columns.Add("ownersString", GetType(String))
         _memesDT.Columns.Add("YourValue", GetType(Double))
         _memesDT.Columns.Add("TargetValue", GetType(Double))
@@ -200,7 +200,7 @@ Public Class LolzzzViewModel
         dr("EPSEffect") = 0.3 * (m.Tailwinds - m.Headwinds)
         dr("RND") = m.RND
         dr("Marketing") = m.Marketing
-        dr("CurrentOwners") = m.CurrentOwners
+        dr("CurrentOwners") = m.CurrentOwners.OrderByDescending(Function(x) x.QtyOwned).ToList
         dr("ownersString") = OwnersToString(m.CurrentOwners)
         dr("YourValue") = OwnersToShares(CurrentUsername, m.CurrentOwners) * m.LZValue
         dr("TargetValue") = OwnersToShares(TargetUsername, m.CurrentOwners) * m.LZValue
