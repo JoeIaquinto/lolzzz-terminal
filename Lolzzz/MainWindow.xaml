@@ -59,7 +59,7 @@
         </Style>
     </Window.Resources>
     <DockPanel LastChildFill="True">
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Left" >
             <Label Style="{StaticResource lolzzzText}" Content="Column:" VerticalAlignment="Center" ></Label>
             <ComboBox Style="{StaticResource lolzzzCombo}" Width="125" Margin="0, 5, 5, 5" HorizontalAlignment="Left" SelectedValue="{Binding CurrentColumnFilter, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" ItemsSource="{Binding ColumnFilterTable}" DisplayMemberPath="ColumnName" SelectedValuePath="ID"
                     VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" MaxDropDownHeight="200" ItemContainerStyle="{StaticResource lolzzzComboBoxItem}">
@@ -70,21 +70,25 @@
                 </ComboBox.ItemsPanel>
             </ComboBox>
             <TextBox Style="{StaticResource lolzzzTextBox}" Width="200" Margin="5,5,5,5" Text="{Binding CurrentColumnFilterText, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Style="{StaticResource lolzzzText}" Content="Filter String:" VerticalAlignment="Center" />
+            <TextBox Style="{StaticResource lolzzzTextBox}" Width="200" Margin="5,5,5,5" Text="{Binding CurrentCustomFilterText, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Style="{StaticResource lolzzzButton}" Content="Apply Filters" Command="{Binding ApplyFilterCommand}" Margin="5" Visibility="Visible"/>
+
             <Label Style="{StaticResource lolzzzText}"  Content="Your Username:" />
             <TextBox Style="{StaticResource lolzzzTextBox}" Width="200" Margin="5,5,5,5" Text="{Binding CurrentUsername, UpdateSourceTrigger=PropertyChanged}" />
             <Label Style="{StaticResource lolzzzText}"  Content="Target Username:" />
             <TextBox Style="{StaticResource lolzzzTextBox}" Width="200" Margin="5,5,5,5" Text="{Binding TargetUsername, UpdateSourceTrigger=PropertyChanged}" />
 
             <Button Style="{StaticResource lolzzzButton}" Content="Open All" Command="{Binding OpenAllCommand}" Margin="5" />
-            <Button Style="{StaticResource lolzzzButton}" Content="Refresh Viewed" Command="{Binding RefreshViewedCommand}" Margin="5" Visibility="Collapsed"/>
             <Button Style="{StaticResource lolzzzButton}" Content="{Binding RefreshAllText}" Command="{Binding RefreshCommand}" Margin="5"/>
+
         </StackPanel>
     
     <DataGrid Name="memeGrid" AutoGenerateColumns="False" RowHeight="100" SelectionMode="Extended"
                                 ItemsSource="{Binding MemesDV, Mode=OneWay}" ColumnHeaderStyle="{StaticResource lolzzzHeader}" RowHeaderStyle="{StaticResource lolzzzRowHeader}" Style="{StaticResource lolzzzdg}">
         <DataGrid.Columns>
-            <DataGridTextColumn HeaderStyle="{StaticResource lolzzzHeader}" x:Name="Ticker" Binding="{Binding Ticker}" Header="Ticker" DisplayIndex="1" Width="70"/>
-            <DataGridTemplateColumn x:Name="Name" Header="Name" DisplayIndex="2" Width="100" >
+            <DataGridTextColumn HeaderStyle="{StaticResource lolzzzHeader}" x:Name="Ticker" Binding="{Binding Ticker}" Header="Ticker" DisplayIndex="0" Width="70"/>
+            <DataGridTemplateColumn x:Name="Name" Header="Name" DisplayIndex="1" Width="100" >
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
 
@@ -92,29 +96,29 @@
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
-            <DataGridTemplateColumn x:Name="Image" Width="105" Header="Image" DisplayIndex="3">
+            <DataGridTemplateColumn x:Name="Image" Width="105" Header="Image" DisplayIndex="2">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <Image Source="{Binding FullImageURL}"/>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
-            <DataGridTextColumn x:Name="FullImageURL" Binding="{Binding FullImageURL}" Header="Full Image URL" DisplayIndex="4" Visibility="Collapsed"/>
-            <DataGridTextColumn x:Name="LZValue" Binding="{Binding LZValue, Converter={StaticResource DecimalConverter}}" Header="LZValue" DisplayIndex="5" />
+            <DataGridTextColumn x:Name="FullImageURL" Binding="{Binding FullImageURL}" Header="Full Image URL" DisplayIndex="3" Visibility="Collapsed"/>
+            <DataGridTextColumn x:Name="LZValue" Binding="{Binding LZValue, Converter={StaticResource DecimalConverter}}" Header="LZValue" DisplayIndex="4" />
 
-            <DataGridTextColumn x:Name="CurrentSharePrice" Binding="{Binding CurrentSharePrice, Converter={StaticResource DecimalConverter}}" SortMemberPath="{Binding CurrentSharePrice, Converter={StaticResource DecimalConverter}}" Header="Current Share Price" DisplayIndex="6" />
-            <DataGridTextColumn x:Name="Likes" Binding="{Binding Likes, Converter={StaticResource IntConverter}}" SortDirection="Ascending" Header="Likes" DisplayIndex="7" />
-            <DataGridTextColumn x:Name="Dislikes" Binding="{Binding Dislikes, Converter={StaticResource IntConverter}}" Header="Dislikes"  DisplayIndex="8" />
-            <DataGridTextColumn x:Name="NetLikes" Binding="{Binding NetLikes, Converter={StaticResource IntConverter}}" Header="Net Likes"  DisplayIndex="9" />
-            <DataGridTextColumn x:Name="Headwinds" Binding="{Binding Headwinds, Converter={StaticResource IntConverter}}" Header="Headwinds" DisplayIndex="10" />
-            <DataGridTextColumn x:Name="Tailwinds" Binding="{Binding Tailwinds, Converter={StaticResource IntConverter}}" Header="Tailwinds" DisplayIndex="11" />
-            <DataGridTextColumn x:Name="NetWinds" Binding="{Binding NetWinds, Converter={StaticResource IntConverter}}" Header="Net Winds" DisplayIndex="12" />
-            <DataGridTextColumn x:Name="EPSEffect" Binding="{Binding EPSEffect, Converter={StaticResource IntConverter}}" Header="Winds EPS" DisplayIndex="13" />
-                <DataGridTextColumn x:Name="YourValue" Binding="{Binding YourValue}" Header="Your Value" />
-                <DataGridTextColumn x:Name="TargetValue" Binding="{Binding TargetValue}" Header="Target Value" />
-                <DataGridTextColumn x:Name="RND" Binding="{Binding RND, Converter={StaticResource DecimalConverter}}" Header="Research Level" DisplayIndex="14" />
-            <DataGridTextColumn x:Name="Marketing" Binding="{Binding Marketing, Converter={StaticResource DecimalConverter}}" Header="Marketing Level" DisplayIndex="15" />
-            <DataGridTemplateColumn Header="Owners">
+            <DataGridTextColumn x:Name="CurrentSharePrice" Binding="{Binding CurrentSharePrice, Converter={StaticResource DecimalConverter}}" SortMemberPath="{Binding CurrentSharePrice, Converter={StaticResource DecimalConverter}}" Header="Current Share Price" DisplayIndex="5" />
+            <DataGridTextColumn x:Name="Likes" Binding="{Binding Likes, Converter={StaticResource IntConverter}}" SortDirection="Ascending" Header="Likes" DisplayIndex="6" />
+            <DataGridTextColumn x:Name="Dislikes" Binding="{Binding Dislikes, Converter={StaticResource IntConverter}}" Header="Dislikes"  DisplayIndex="7" />
+            <DataGridTextColumn x:Name="NetLikes" Binding="{Binding NetLikes, Converter={StaticResource IntConverter}}" Header="Net Likes"  DisplayIndex="8" />
+            <DataGridTextColumn x:Name="Headwinds" Binding="{Binding Headwinds, Converter={StaticResource IntConverter}}" Header="Headwinds" DisplayIndex="9" />
+            <DataGridTextColumn x:Name="Tailwinds" Binding="{Binding Tailwinds, Converter={StaticResource IntConverter}}" Header="Tailwinds" DisplayIndex="10" />
+            <DataGridTextColumn x:Name="NetWinds" Binding="{Binding NetWinds, Converter={StaticResource IntConverter}}" Header="Net Winds" DisplayIndex="11" />
+            <DataGridTextColumn x:Name="EPSEffect" Binding="{Binding EPSEffect, Converter={StaticResource IntConverter}}" Header="Winds EPS" DisplayIndex="12" />
+                <DataGridTextColumn x:Name="YourValue" Binding="{Binding YourValue}" Header="Your Value" DisplayIndex="13"/>
+                <DataGridTextColumn x:Name="TargetValue" Binding="{Binding TargetValue}" Header="Target Value" DisplayIndex="14"/>
+                <DataGridTextColumn x:Name="RND" Binding="{Binding RND, Converter={StaticResource DecimalConverter}}" Header="Research Level" DisplayIndex="15" />
+            <DataGridTextColumn x:Name="Marketing" Binding="{Binding Marketing, Converter={StaticResource DecimalConverter}}" Header="Marketing Level" DisplayIndex="16" />
+                <DataGridTemplateColumn Header="Owners" DisplayIndex="17">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                             
@@ -127,8 +131,23 @@
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
-            <DataGridTextColumn x:Name="UserName" Binding="{Binding UserName}" Header="Creator" DisplayIndex="16" />
-            <DataGridTextColumn x:Name="CreateDate" Binding="{Binding CreateDate}" Header="Create Date" DisplayIndex="17" />
+                <DataGridTemplateColumn Header="Orders" DisplayIndex="18">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+
+                            <DataGrid Name="OrdersGrid" Background="Black" HeadersVisibility="Column" HorizontalScrollBarVisibility="Disabled" ColumnHeaderStyle="{StaticResource lolzzzHeader}" AutoGenerateColumns="False" Style="{StaticResource lolzzzdg}" ItemsSource="{Binding CurrentOrders, Mode=OneWay}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{Binding OrderType}" Header="Order Type" />
+                                    <DataGridTextColumn Binding="{Binding Price}" Header="Price" />
+                                    <DataGridTextColumn Binding="{Binding RemainingQty}" Header="Qty" />
+                                    <DataGridTextColumn Binding="{Binding OrderCreatorUserName}" Header="User" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn x:Name="UserName" Binding="{Binding UserName}" Header="Creator" DisplayIndex="19" />
+            <DataGridTextColumn x:Name="CreateDate" Binding="{Binding CreateDate}" Header="Create Date" DisplayIndex="20" />
         </DataGrid.Columns>
     </DataGrid>
     </DockPanel>

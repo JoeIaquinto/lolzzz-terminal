@@ -24,6 +24,7 @@ Public Class LolzzzViewModel
     Private _columnFilterTable As DataTable
     Private _currentColumnFilterText As String
     Private _currentColumnFilter As String = ALL_VALUE
+    Private _currentCustomFilterText As String
     Private _apiKey As String = "31E2B259-343B-4752-8930-5D02AE1F352A"
     Public Sub New()
         '"MemeKey":1,"Ticker":"SWAG","Name":"Swag Baby","FullImageURL":"http://i.imgur.com/SYluBOh.gif","LZValue":0.0000,
@@ -50,6 +51,7 @@ Public Class LolzzzViewModel
         _memesDT.Columns.Add("RND", GetType(Integer))
         _memesDT.Columns.Add("Marketing", GetType(Integer))
         _memesDT.Columns.Add("CurrentOwners", GetType(List(Of CurrentOwner)))
+        _memesDT.Columns.Add("CurrentOrders", GetType(List(Of CurrentOrder)))
         _memesDT.Columns.Add("ownersString", GetType(String))
         _memesDT.Columns.Add("YourValue", GetType(Double))
         _memesDT.Columns.Add("TargetValue", GetType(Double))
@@ -106,6 +108,17 @@ Public Class LolzzzViewModel
 
             ApplyFilters()
             RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("CurrentColumnFilterText"))
+        End Set
+    End Property
+
+    Public Property CurrentCustomFilterText As String
+        Get
+            Return _currentCustomFilterText
+        End Get
+        Set(value As String)
+            _currentCustomFilterText = value
+
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("CurrentCustomFilterText"))
         End Set
     End Property
 
@@ -201,6 +214,7 @@ Public Class LolzzzViewModel
         dr("RND") = m.RND
         dr("Marketing") = m.Marketing
         dr("CurrentOwners") = m.CurrentOwners.OrderByDescending(Function(x) x.QtyOwned).ToList
+        dr("CurrentOrders") = m.CurrentOrders.OrderByDescending(Function(x) x.Price).ToList
         dr("ownersString") = OwnersToString(m.CurrentOwners)
         dr("YourValue") = OwnersToShares(CurrentUsername, m.CurrentOwners) * m.LZValue
         dr("TargetValue") = OwnersToShares(TargetUsername, m.CurrentOwners) * m.LZValue
@@ -331,6 +345,8 @@ Public Class LolzzzViewModel
             AppendFilterCriteria(columnFilterString, filter)
         End If
 
+        AppendFilterCriteria(CurrentCustomFilterText, filter)
+
         MemesDV.RowFilter = filter
 
         RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("MemesDV"))
@@ -346,7 +362,20 @@ Public Class LolzzzViewModel
 #End Region
 
 #Region "Commands"
+#Region "Apply Custom Filter"
 
+    Private _applyFilterCommand As RelayCommand
+
+    Public ReadOnly Property ApplyFilterCommand As ICommand
+        Get
+            If _applyFilterCommand Is Nothing Then
+                _applyFilterCommand = New RelayCommand(AddressOf ApplyFilters)
+            End If
+            Return _applyFilterCommand
+        End Get
+    End Property
+
+#End Region
 #Region "Open All"
 
     Private _openAllCommand As RelayCommand
